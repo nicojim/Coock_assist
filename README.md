@@ -12,3 +12,6 @@ Publier le dossier sur un hébergeur HTTPS statique (Vercel, Netlify, etc.), ouv
 
 ## Limites
 L’extraction repose sur des règles locales, pas sur une IA : elle fonctionne surtout avec des lignes d’ingrédients comme `500 g de semoule`. Pour séparer les étapes, ajouter le titre `Préparation :`. Les quantités dans les étapes ne sont remplacées que si une correspondance exacte est reconnue ; contrôler les étapes avant de cuisiner. Photos et URL ne sont pas analysées automatiquement. Les données locales peuvent être perdues si le stockage du navigateur est effacé.
+
+## V5
+Lors de l’ajout d’une recette aux courses, la recette recalculée est automatiquement enregistrée dans « Mes recettes » avec ses ingrédients adaptés et les étapes reconnues. La recette originale est conservée.
