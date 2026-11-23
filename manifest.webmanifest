@@ -1,0 +1,9 @@
+{
+  "name": "Abderrazek cooking assistant",
+  "short_name": "Abderrazek",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#fbfcfa",
+  "theme_color": "#176b52",
+  "description": "Abderrazek cooking assistant — recettes, portions et listes de courses."
+}

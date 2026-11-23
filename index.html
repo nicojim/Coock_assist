@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#176b52">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Abderrazek cooking assistant">
+<link rel="manifest" href="manifest.webmanifest">
+<title>Abderrazek cooking assistant</title>
+<style>
+:root{--green:#176b52;--green2:#e8f3ed;--ink:#1e2924;--muted:#69766f;--line:#e3e9e5;--paper:#fbfcfa;--white:#fff;--orange:#e18a45;--shadow:0 10px 30px #1d493011}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding-bottom:88px}
+header{background:linear-gradient(130deg,#145b47,#287c5e);color:white;padding:25px 20px 22px;border-radius:0 0 25px 25px}
+.top{max-width:760px;margin:auto}.eyebrow{font-size:11px;letter-spacing:.14em;text-transform:uppercase;opacity:.8;font-weight:700}.brand{font-size:28px;font-weight:800;letter-spacing:-.04em;margin:5px 0}.sub{opacity:.86;font-size:14px}
+main{max-width:760px;margin:18px auto;padding:0 15px}.tabs{display:flex;gap:8px;background:#edf2ee;padding:5px;border-radius:14px;margin:0 0 18px;position:sticky;top:8px;z-index:4}
+.tab{border:0;background:transparent;padding:11px 8px;border-radius:10px;flex:1;font-weight:700;color:#617067;font-size:13px}.tab.active{background:white;color:var(--green);box-shadow:0 2px 8px #0000000d}
+.panel{display:none}.panel.active{display:block}.card{background:white;border:1px solid var(--line);border-radius:18px;padding:17px;margin-bottom:14px;box-shadow:var(--shadow)}
+h2{font-size:20px;margin:0 0 5px;letter-spacing:-.03em}h3{font-size:15px;margin:0 0 12px}.hint{color:var(--muted);font-size:13px;margin:0 0 14px}
+label{display:block;font-size:12px;font-weight:700;color:#526158;margin:12px 0 6px}input,textarea,select{width:100%;border:1px solid #dce4de;border-radius:11px;padding:12px 13px;background:#fff;color:var(--ink);font:inherit;outline:none}input:focus,textarea:focus,select:focus{border-color:#65a58b;box-shadow:0 0 0 3px #176b5215}textarea{min-height:125px;resize:vertical}
+.row{display:flex;gap:10px;align-items:center}.row>*{flex:1;min-width:0}.btn{border:0;border-radius:12px;background:var(--green);color:white;padding:12px 15px;font-weight:750;font-size:14px;cursor:pointer}.btn.secondary{background:var(--green2);color:var(--green)}.btn.ghost{background:#f1f4f1;color:#526158}.btn.small{padding:8px 10px;font-size:12px}.btn:disabled{opacity:.45}
+.pill{display:inline-flex;background:#f1f5f1;color:#476254;border-radius:30px;padding:5px 9px;font-size:11px;font-weight:700}
+.sourcebox{border:1.5px dashed #cddbd1;border-radius:13px;padding:14px;background:#fbfdfb}.sourcebox input[type=file]{padding:8px;font-size:13px}.preview{max-width:100%;max-height:190px;border-radius:12px;margin-top:10px;display:none}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.ingredient{display:grid;grid-template-columns:minmax(0,1fr) 78px 75px 34px;gap:6px;align-items:center;margin:8px 0}.ingredient input{padding:9px 8px;font-size:13px}.ingredient .unit{font-size:12px;color:var(--muted)}.x{border:0;background:#fff0ed;color:#b84e3c;border-radius:9px;height:36px;font-weight:800}
+.qty{font-variant-numeric:tabular-nums;font-weight:750}.recipe{border:1px solid var(--line);border-radius:14px;padding:13px;margin:9px 0}.recipe-head{display:flex;justify-content:space-between;gap:10px;align-items:start}.recipe h3{margin:0 0 3px}.muted{color:var(--muted);font-size:12px}
+.group{margin:15px 0}.group-title{font-weight:800;color:#385b49;border-bottom:1px solid var(--line);padding-bottom:8px;margin-bottom:6px}.shopitem{display:flex;align-items:center;gap:10px;padding:9px 2px;border-bottom:1px solid #f0f3f0}.shopitem input{width:19px;height:19px;accent-color:var(--green)}.shopitem.done span{text-decoration:line-through;color:#9aa49d}.shopitem span{flex:1}.shopqty{font-size:13px;font-weight:750;color:#526158;white-space:nowrap}
+.notice{background:#fff7e9;border:1px solid #f1dfbd;color:#765326;padding:11px 12px;border-radius:12px;font-size:12px;margin-top:12px}
+.empty{text-align:center;padding:32px 14px;color:var(--muted)}.empty b{display:block;color:var(--ink);margin-bottom:5px}
+.bottom{position:fixed;bottom:0;left:0;right:0;background:#ffffffed;backdrop-filter:blur(12px);border-top:1px solid var(--line);padding:10px 15px calc(10px + env(safe-area-inset-bottom));display:flex;justify-content:center;z-index:5}.bottom-inner{width:100%;max-width:730px;display:flex;gap:9px}.bottom .btn{flex:1}
+small.estimate{color:#a66b29;font-size:10px;font-weight:700}
+@media(min-width:600px){header{padding:32px 28px}.brand{font-size:34px}.ingredient{grid-template-columns:minmax(0,1fr) 100px 90px 36px}}
+</style>
+</head>
+<body>
+<header><div class="top"><div class="eyebrow">Carnet de cuisine personnel</div><div class="brand">Abderrazek cooking assistant <span aria-hidden="true">🌿</span></div><div class="sub">Recettes, portions & liste de courses — tout reste sur cet appareil.</div></div></header>
+<main>
+<nav class="tabs" aria-label="Navigation">
+<button class="tab active" data-tab="add">＋ Recette</button><button class="tab" data-tab="book">Mes recettes</button><button class="tab" data-tab="shopping">Courses <span id="cartCount"></span></button>
+</nav>
+<section class="panel active" id="add">
+<div class="card">
+<h2>Ajouter une recette</h2><p class="hint">Colle la recette, saisis les ingrédients ou joins une photo pour la garder avec ta recette.</p>
+<label>Nom du plat</label><input id="recipeName" placeholder="Ex. Ojja merguez, couscous au poisson…">
+<div class="grid2"><div><label>Catégorie</label><select id="category"><option>Plat principal</option><option>Entrée</option><option>Salade</option><option>Accompagnement</option><option>Soupe</option><option>Dessert</option><option>Pâtisserie</option></select></div><div><label>Personnes prévues</label><input id="baseServings" type="number" min="1" value="4"></div></div>
+<label>Recette (texte libre)</label><textarea id="rawText" placeholder="Colle ici les ingrédients et les étapes. Exemple :&#10;500 g de semoule&#10;1 kg de poisson&#10;2 oignons&#10;…"></textarea>
+<label>Ou lien de la recette</label><input id="recipeUrl" type="url" placeholder="https://…">
+<label>Photo de la recette (facultatif)</label><div class="sourcebox"><input id="photo" type="file" accept="image/*" capture="environment"><img id="preview" class="preview" alt="Aperçu de la photo"><div class="muted">La photo est conservée localement avec la recette. La lecture automatique du texte sur photo et l'import direct d'une page web nécessitent une prochaine étape avec un service d'analyse.</div></div>
+<div class="notice">Astuce : pour cette première version, saisis ou colle les ingrédients dans le champ texte. L'analyse automatique de texte, photo et URL par IA sera ajoutée dans une prochaine version.</div>
+</div>
+<div class="card">
+<div class="row" style="justify-content:space-between"><div><h2>Ingrédients</h2><p class="hint" style="margin:3px 0 0">Quantité, unité et famille de produit.</p></div><button class="btn secondary small" id="addIngredient">＋ Ajouter</button></div>
+<div id="ingredients"></div>
+<div class="row" style="margin-top:14px"><button class="btn ghost" id="parseText">Extraire depuis le texte</button><button class="btn" id="saveRecipe">Enregistrer la recette</button></div>
+<p class="muted" style="margin:10px 0 0">Les ingrédients sans quantité peuvent recevoir une estimation standard par adulte. Vérifie les estimations avant d'enregistrer.</p>
+</div>
+</section>
+<section class="panel" id="book">
+<div class="card"><h2>Mes recettes</h2><p class="hint">Tes recettes enregistrées sur cet iPhone.</p><div id="recipeList"></div></div>
+</section>
+<section class="panel" id="shopping">
+<div class="card"><div class="row" style="justify-content:space-between"><div><h2>Liste de courses</h2><p class="hint" style="margin:3px 0 0">Ingrédients regroupés par famille.</p></div><button class="btn ghost small" id="clearCart">Vider</button></div>
+<div id="shoppingContent"><div class="empty"><b>Ta liste est vide</b>Ajoute une recette et génère ses courses.</div></div>
+</div>
+</section>
+</main>
+<div class="bottom"><div class="bottom-inner"><button class="btn secondary" id="addMore">＋ Nouvelle recette</button><button class="btn" id="makeList">Générer les courses</button></div></div>
+<script>
+const $=id=>document.getElementById(id);
+const families=["Fruits et légumes","Boucherie / volaille","Poissonnerie","Crèmerie / œufs","Épicerie salée","Épicerie sucrée","Boulangerie","Surgelés","Boissons","Autres"];
+const defaults={
+"semoule":{q:100,u:"g",f:"Épicerie salée"},"couscous":{q:100,u:"g",f:"Épicerie salée"},"pâtes":{q:100,u:"g",f:"Épicerie salée"},"macaroni":{q:100,u:"g",f:"Épicerie salée"},"riz":{q:90,u:"g",f:"Épicerie salée"},"agneau":{q:170,u:"g",f:"Boucherie / volaille"},"viande":{q:160,u:"g",f:"Boucherie / volaille"},"bœuf":{q:160,u:"g",f:"Boucherie / volaille"},"boeuf":{q:160,u:"g",f:"Boucherie / volaille"},"poulet":{q:250,u:"g",f:"Boucherie / volaille"},"poisson":{q:180,u:"g",f:"Poissonnerie"},"thon":{q:100,u:"g",f:"Poissonnerie"},"tomate":{q:150,u:"g",f:"Fruits et légumes"},"oignon":{q:0.5,u:"pièce",f:"Fruits et légumes"},"carotte":{q:1,u:"pièce",f:"Fruits et légumes"},"pomme de terre":{q:200,u:"g",f:"Fruits et légumes"},"courgette":{q:0.5,u:"pièce",f:"Fruits et légumes"},"poivron":{q:0.5,u:"pièce",f:"Fruits et légumes"},"pois chiches":{q:60,u:"g secs",f:"Épicerie salée"},"œuf":{q:1,u:"pièce",f:"Crèmerie / œufs"},"oeuf":{q:1,u:"pièce",f:"Crèmerie / œufs"},"fromage":{q:30,u:"g",f:"Crèmerie / œufs"},"lait":{q:100,u:"ml",f:"Crèmerie / œufs"},"huile":{q:15,u:"ml",f:"Épicerie salée"},"harissa":{q:10,u:"g",f:"Épicerie salée"},"persil":{q:5,u:"g",f:"Fruits et légumes"},"coriandre":{q:5,u:"g",f:"Fruits et légumes"}
+};
+let ingredients=[],recipes=load("recipes",[]),cart=load("cart",[]),photoData="";
+function load(k,d){try{return JSON.parse(localStorage.getItem("cuisine_"+k))??d}catch{return d}}
+function persist(){localStorage.setItem("cuisine_recipes",JSON.stringify(recipes));localStorage.setItem("cuisine_cart",JSON.stringify(cart));}
+function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function estimate(name){let n=name.toLowerCase();for(const k in defaults)if(n.includes(k))return defaults[k];return {q:0,u:"",f:guessFamily(name)}}
+function guessFamily(n){let s=n.toLowerCase();if(/agneau|viande|poulet|bœuf|boeuf|merguez|saucisse|escalope/.test(s))return "Boucherie / volaille";if(/poisson|thon|crevette|calamar|sardine/.test(s))return "Poissonnerie";if(/œuf|oeuf|fromage|lait|beurre|crème|yaourt/.test(s))return "Crèmerie / œufs";if(/tomate|oignon|carotte|navet|courgette|poivron|pomme|ail|persil|coriandre|citron|légume|legume/.test(s))return "Fruits et légumes";if(/sucre|miel|farine|chocolat|confiture/.test(s))return "Épicerie sucrée";if(/pain|baguette/.test(s))return "Boulangerie";return "Épicerie salée"}
+function addRow(item={name:"",qty:"",unit:"g",family:""}){let d=estimate(item.name||"");let obj={name:item.name||"",qty:item.qty??"",unit:item.unit??d.u,family:item.family||d.f};ingredients.push(obj);renderIngredients()}
+function renderIngredients(){$("ingredients").innerHTML=ingredients.map((x,i)=>`<div class="ingredient"><input aria-label="Ingrédient" data-i="${i}" data-k="name" placeholder="Ingrédient" value="${esc(x.name)}"><input aria-label="Quantité" data-i="${i}" data-k="qty" type="number" min="0" step="any" placeholder="${estimate(x.name).q||"Qté"}" value="${esc(x.qty)}"><select aria-label="Unité" data-i="${i}" data-k="unit">${["g","kg","ml","cl","L","pièce","g secs","c. à soupe","c. à café","pincée","botte","boîte"].map(u=>`<option ${x.unit===u?"selected":""}>${u}</option>`).join("")}</select><button class="x" data-del="${i}" aria-label="Supprimer">×</button><select style="grid-column:1/-1" data-i="${i}" data-k="family">${families.map(f=>`<option ${x.family===f?"selected":""}>${f}</option>`).join("")}</select></div>`).join("");$("ingredients").querySelectorAll("[data-i]").forEach(el=>el.addEventListener("change",()=>{let i=+el.dataset.i,k=el.dataset.k;ingredients[i][k]=el.value;if(k==="name"&&!ingredients[i].family){ingredients[i].family=guessFamily(el.value);renderIngredients()}}));$("ingredients").querySelectorAll("[data-del]").forEach(b=>b.onclick=()=>{ingredients.splice(+b.dataset.del,1);renderIngredients()})}
+function parseText(){let lines=$("rawText").value.split(/\n|,(?=\s*\d)/).map(s=>s.trim()).filter(Boolean);let parsed=[];for(let line of lines){let m=line.match(/^([\d.,/]+)\s*(kg|g|ml|cl|l|pièces?|œufs?|c\.?\s*à\s*soupe|c\.?\s*à\s*café)?\s*(?:de|d['’])?\s*(.+)$/i);if(m){let q=parseFloat(m[1].replace(",","."));let unit=(m[2]||"").toLowerCase();let name=m[3].replace(/[.;]$/,"").trim();let u=unit.startsWith("kg")?"kg":unit==="l"?"L":unit||"g";parsed.push({name,qty:q,unit:u,family:guessFamily(name)})}else if(line.length<65&&!/^(préparation|preparation|étapes|etapes|cuisson)/i.test(line)){let n=line.replace(/^[-•*]\s*/,"").replace(/[.;]$/,"");if(n)parsed.push({name:n,qty:"",unit:estimate(n).u,family:guessFamily(n)})}}if(parsed.length){ingredients=parsed;renderIngredients();alert(parsed.length+" ingrédient(s) repéré(s). Vérifie les quantités et les familles.");}else alert("Aucun ingrédient reconnu. Essaie le format « 500 g de semoule » ou ajoute les lignes manuellement.")}
+function saveRecipe(){let name=$("recipeName").value.trim();if(!name){alert("Donne un nom à la recette.");return}if(!ingredients.length){parseText();if(!ingredients.length)return}let servings=Math.max(1,+$("baseServings").value||4);let items=ingredients.map(x=>{let q=x.qty===""?estimate(x.name).q:x.qty;let u=x.qty===""?estimate(x.name).u:x.unit;return {...x,qty:+q||0,unit:u,estimated:x.qty===""}});let r={id:Date.now(),name,category:$("category").value,servings,items,text:$("rawText").value,url:$("recipeUrl").value,photo:photoData};recipes.unshift(r);persist();resetForm();renderRecipes();switchTab("book");}
+function resetForm(){ingredients=[];renderIngredients();["recipeName","rawText","recipeUrl"].forEach(id=>$(id).value="");$("baseServings").value=4;$("photo").value="";$("preview").style.display="none";photoData=""}
+function fmt(n){return Number.isInteger(n)?String(n):String(Math.round(n*10)/10).replace(".",",")}
+function scaled(q,from,to){return q*to/from}
+function renderRecipes(){$("recipeList").innerHTML=recipes.length?recipes.map(r=>`<div class="recipe"><div class="recipe-head"><div><h3>${esc(r.name)}</h3><div class="muted">${esc(r.category)} · ${r.servings} personnes · ${r.items.length} ingrédients</div></div><button class="btn ghost small" data-delrecipe="${r.id}">Supprimer</button></div><div class="row" style="margin-top:12px"><button class="btn secondary small" data-view="${r.id}">Voir / ajuster</button><button class="btn small" data-cart="${r.id}">Ajouter aux courses</button></div><div id="details-${r.id}"></div></div>`).join(""):'<div class="empty"><b>Aucune recette pour le moment</b>Ajoute ton premier plat dans l’onglet Recette.</div>';
+$("recipeList").querySelectorAll("[data-delrecipe]").forEach(b=>b.onclick=()=>{recipes=recipes.filter(r=>r.id!==+b.dataset.delrecipe);persist();renderRecipes()});
+$("recipeList").querySelectorAll("[data-view]").forEach(b=>b.onclick=()=>{let r=recipes.find(x=>x.id===+b.dataset.view),d=$("details-"+r.id);if(d.innerHTML){d.innerHTML="";return}d.innerHTML=`<label>Nombre de personnes</label><input type="number" min="1" value="${r.servings}" id="serv-${r.id}"><div class="muted" style="margin:8px 0">${r.items.map(x=>`${esc(x.name)} : ${fmt(x.qty)} ${esc(x.unit)}${x.estimated?' (estimé)':''}`).join("<br>")}</div><button class="btn secondary small" id="update-${r.id}">Mettre à jour</button>`;$("update-"+r.id).onclick=()=>{r.servings=Math.max(1,+$("serv-"+r.id).value||1);persist();renderRecipes()}});
+$("recipeList").querySelectorAll("[data-cart]").forEach(b=>b.onclick=()=>{let r=recipes.find(x=>x.id===+b.dataset.cart);let n=+(prompt("Pour combien de personnes ?",r.servings)||r.servings);if(n<1)return;for(let x of r.items){let q=scaled(x.qty,r.servings,n);cart.push({name:x.name,qty:q,unit:x.unit,family:x.family,done:false,source:r.name})}persist();renderCart();switchTab("shopping")})}
+function renderCart(){let count=cart.filter(x=>!x.done).length;$("cartCount").textContent=count?`(${count})`:"";let groups={};cart.forEach((x,i)=>{let k=x.family||"Autres";(groups[k]??=[]).push({...x,i})});$("shoppingContent").innerHTML=cart.length?Object.keys(groups).sort((a,b)=>families.indexOf(a)-families.indexOf(b)).map(g=>`<div class="group"><div class="group-title">${esc(g)}</div>${groups[g].map(x=>`<label class="shopitem ${x.done?'done':''}"><input type="checkbox" data-check="${x.i}" ${x.done?'checked':''}><span>${esc(x.name)}</span><b class="shopqty">${fmt(x.qty)} ${esc(x.unit)}</b></label>`).join("")}</div>`).join(""):'<div class="empty"><b>Ta liste est vide</b>Ajoute une recette et génère ses courses.</div>';$("shoppingContent").querySelectorAll("[data-check]").forEach(c=>c.onchange=()=>{cart[+c.dataset.check].done=c.checked;persist();renderCart()})}
+function switchTab(t){document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("active",b.dataset.tab===t));document.querySelectorAll(".panel").forEach(p=>p.classList.toggle("active",p.id===t));}
+document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>switchTab(b.dataset.tab));
+$("addIngredient").onclick=()=>addRow();$("parseText").onclick=parseText;$("saveRecipe").onclick=saveRecipe;$("addMore").onclick=()=>{switchTab("add");window.scrollTo({top:0,behavior:"smooth"})};
+$("makeList").onclick=()=>{if(!cart.length){alert("Ajoute d'abord une recette depuis Mes recettes.");switchTab("book")}else switchTab("shopping")};
+$("clearCart").onclick=()=>{if(confirm("Vider toute la liste de courses ?")){cart=[];persist();renderCart()}};
+$("photo").onchange=e=>{let f=e.target.files[0];if(!f)return;let reader=new FileReader();reader.onload=()=>{photoData=reader.result;$("preview").src=photoData;$("preview").style.display="block"};reader.readAsDataURL(f)};
+addRow();ingredients=[];renderIngredients();renderRecipes();renderCart();
+if("serviceWorker" in navigator && location.protocol.startsWith("http"))navigator.serviceWorker.register("./sw.js").catch(()=>{});
+</script>
+</body></html>
