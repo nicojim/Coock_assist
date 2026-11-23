@@ -44,9 +44,9 @@ small.estimate{color:#a66b29;font-size:10px;font-weight:700}
 <label>Nom du plat</label><input id="recipeName" placeholder="Ex. Ojja merguez, couscous au poisson…">
 <div class="grid2"><div><label>Catégorie</label><select id="category"><option>Plat principal</option><option>Entrée</option><option>Salade</option><option>Accompagnement</option><option>Soupe</option><option>Dessert</option><option>Pâtisserie</option></select></div><div><label>Personnes prévues</label><input id="baseServings" type="number" min="1" value="4"></div></div>
 <label>Recette (texte libre)</label><textarea id="rawText" placeholder="Colle ici les ingrédients et les étapes. Exemple :&#10;500 g de semoule&#10;1 kg de poisson&#10;2 oignons&#10;…"></textarea>
-<label>Ou lien de la recette</label><input id="recipeUrl" type="url" placeholder="https://…">
-<label>Photo de la recette (facultatif)</label><div class="sourcebox"><input id="photo" type="file" accept="image/*" capture="environment"><img id="preview" class="preview" alt="Aperçu de la photo"><div class="muted">La photo est conservée localement avec la recette. La lecture automatique du texte sur photo et l'import direct d'une page web nécessitent une prochaine étape avec un service d'analyse.</div></div>
-<div class="notice">Astuce : pour cette première version, saisis ou colle les ingrédients dans le champ texte. L'analyse automatique de texte, photo et URL par IA sera ajoutée dans une prochaine version.</div>
+<label>Ou lien de la recette</label><div class="row"><input id="recipeUrl" type="url" placeholder="https://…"><button class="btn secondary" id="importUrl" style="flex:0 0 auto">Importer</button></div><p class="muted" id="urlStatus" aria-live="polite">Import automatique depuis les sites de recettes compatibles.</p>
+<label>Photo de la recette (facultatif)</label><div class="sourcebox"><input id="photo" type="file" accept="image/*" capture="environment"><img id="preview" class="preview" alt="Aperçu de la photo"><div class="muted">La photo est analysée automatiquement par reconnaissance de texte (OCR). Vérifie les ingrédients détectés.</div></div>
+<div class="notice" id="importStatus" aria-live="polite">Photo : reconnaissance OCR automatique. URL : import via Vercel depuis les sites compatibles. Vérifie les résultats avant enregistrement.</div>
 </div>
 <div class="card">
 <div class="row" style="justify-content:space-between"><div><h2>Ingrédients</h2><p class="hint" style="margin:3px 0 0">Quantité, unité et famille de produit.</p></div><button class="btn secondary small" id="addIngredient">＋ Ajouter</button></div>
@@ -96,7 +96,22 @@ function extractRecipe(raw){
  return {parsed,steps};
 }
 function parseText(silent=true){const {parsed}=extractRecipe($("rawText").value);if(parsed.length){ingredients=parsed;renderIngredients();$("autoStatus").textContent=`${parsed.length} ingrédient(s) détecté(s) automatiquement. Vérifie les quantités avant d’enregistrer.`}else{$("autoStatus").textContent="Aucun ingrédient détecté. Utilise par exemple « 500 g de semoule » ou ajoute un ingrédient manuellement.";if(!silent)alert("Aucun ingrédient reconnu.")}return parsed.length}
-let parseTimer;$("rawText").addEventListener("input",()=>{clearTimeout(parseTimer);parseTimer=setTimeout(()=>parseText(true),350)});
+let parseTimer;
+function applyImportedText(t){$("rawText").value=t;clearTimeout(parseTimer);parseText(true)}
+$("rawText").addEventListener("input",()=>{clearTimeout(parseTimer);parseTimer=setTimeout(()=>parseText(true),350)});
+function status(msg){$("importStatus").textContent=msg}
+$("importUrl").onclick=async()=>{
+ const url=$("recipeUrl").value.trim();if(!/^https?:\/\//i.test(url)){alert("Saisis une URL valide.");return}
+ $("importUrl").disabled=true;$("urlStatus").textContent="Import en cours…";
+ try{const response=await fetch("/api/import-recipe?url="+encodeURIComponent(url));const data=await response.json();if(!response.ok)throw Error(data.error||"Import impossible");
+ if(data.name)$("recipeName").value=data.name;if(data.servings)$("baseServings").value=data.servings;
+ applyImportedText([...(data.ingredients||[]),"Préparation :",...(data.steps||[])].join("\n"));
+ $("urlStatus").textContent=`${(data.ingredients||[]).length} ingrédients importés.`;status("Import terminé. Vérifie les quantités et les étapes.");
+ }catch(e){$("urlStatus").textContent="Import impossible : "+e.message+". Copie-colle la recette dans le champ texte."}finally{$("importUrl").disabled=false}
+};
+function ocrLibrary(){return new Promise((resolve,reject)=>{if(window.Tesseract)return resolve(window.Tesseract);const script=document.createElement("script");script.src="https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js";script.onload=()=>window.Tesseract?resolve(window.Tesseract):reject(Error("Moteur OCR indisponible"));script.onerror=()=>reject(Error("Connexion nécessaire pour lire la photo"));document.head.appendChild(script)})}
+async function readPhotoText(file){status("Reconnaissance de la photo en cours…");try{const ocr=await ocrLibrary();const result=await ocr.recognize(file,"fra+eng");const t=(result.data.text||"").trim();if(!t)throw Error("Aucun texte lisible");const previous=$("rawText").value.trim();applyImportedText(previous?previous+"\n"+t:t);status("Photo analysée. Vérifie les ingrédients extraits.")}catch(e){status("Photo jointe, mais lecture impossible : "+e.message)}}
+
 function saveRecipe(){let name=$("recipeName").value.trim();if(!name){alert("Donne un nom à la recette.");return}if(!ingredients.length){parseText(false);if(!ingredients.length)return}let servings=Math.max(1,+$("baseServings").value||4);let items=ingredients.map(x=>{let q=x.qty===""?estimate(x.name).q:x.qty;let u=x.qty===""?estimate(x.name).u:x.unit;return {...x,qty:+q||0,unit:u,estimated:x.qty===""}});let r={id:Date.now(),name,category:$("category").value,servings,items,text:$("rawText").value,url:$("recipeUrl").value,photo:photoData};recipes.unshift(r);persist();resetForm();renderRecipes();switchTab("book");}
 function resetForm(){clearTimeout(parseTimer);ingredients=[];renderIngredients();["recipeName","rawText","recipeUrl"].forEach(id=>$(id).value="");$("baseServings").value=4;$("photo").value="";$("preview").style.display="none";photoData=""}
 function fmt(n){return Number.isInteger(n)?String(n):String(Math.round(n*10)/10).replace(".",",")}
@@ -138,7 +153,7 @@ function switchTab(t){document.querySelectorAll(".tab").forEach(b=>b.classList.t
 document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>switchTab(b.dataset.tab));
 $("addIngredient").onclick=()=>addRow();$("saveRecipe").onclick=saveRecipe;
 $("clearCart").onclick=()=>{if(confirm("Vider toute la liste de courses ?")){cart=[];recipeSelections=[];persist();renderCart()}};
-$("photo").onchange=e=>{let f=e.target.files[0];if(!f)return;let reader=new FileReader();reader.onload=()=>{photoData=reader.result;$("preview").src=photoData;$("preview").style.display="block"};reader.readAsDataURL(f)};
+$("photo").onchange=e=>{let f=e.target.files[0];if(!f)return;let reader=new FileReader();reader.onload=()=>{photoData=reader.result;$("preview").src=photoData;$("preview").style.display="block"};reader.readAsDataURL(f);readPhotoText(f)};
 addRow();ingredients=[];renderIngredients();renderRecipes();renderCart();
 if("serviceWorker" in navigator && location.protocol.startsWith("http"))navigator.serviceWorker.register("./sw.js").catch(()=>{});
 </script>

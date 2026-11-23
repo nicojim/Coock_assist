@@ -1,17 +1,11 @@
-# MaxiMangeMange — V3
+# MaxiMangeMange V6
 
-Application PWA pour iPhone, sans compte, avec stockage local.
+Ajouts : import URL de recettes avec données structurées schema.org/Recipe via fonction Vercel `/api/import-recipe`, et reconnaissance OCR automatique des photos avec Tesseract.js (chargement depuis CDN).
 
-## Nouveautés
-- Extraction automatique des ingrédients lors de la saisie du texte (délai 350 ms), sans bouton.
-- Après l’ajout aux courses, affichage des ingrédients recalculés et des étapes de préparation sous la liste.
-- Nom MaxiMangeMange dans la page, l’onglet et le manifeste PWA.
-
-## Utilisation
-Publier le dossier sur un hébergeur HTTPS statique (Vercel, Netlify, etc.), ouvrir dans Safari, puis Partager > Sur l’écran d’accueil.
+## Déploiement
+Publier le contenu de ce dossier sur Vercel en tant que projet statique avec fonctions Node.js. Le dossier `api` doit être à la racine du projet. Ne pas publier seulement `index.html`. HTTPS requis pour la PWA.
 
 ## Limites
-L’extraction repose sur des règles locales, pas sur une IA : elle fonctionne surtout avec des lignes d’ingrédients comme `500 g de semoule`. Pour séparer les étapes, ajouter le titre `Préparation :`. Les quantités dans les étapes ne sont remplacées que si une correspondance exacte est reconnue ; contrôler les étapes avant de cuisiner. Photos et URL ne sont pas analysées automatiquement. Les données locales peuvent être perdues si le stockage du navigateur est effacé.
+Les sites qui bloquent l'accès automatisé ou n'exposent pas de données structurées ne sont pas importables. La photo doit contenir du texte lisible et l'OCR peut commettre des erreurs. L'OCR nécessite Internet lors du chargement initial; les données de recettes restent stockées localement dans le navigateur. Les URL envoyées au service Vercel sont transmises au serveur pour extraction.
 
-## V5
-Lors de l’ajout d’une recette aux courses, la recette recalculée est automatiquement enregistrée dans « Mes recettes » avec ses ingrédients adaptés et les étapes reconnues. La recette originale est conservée.
+Les fonctions de la V5 (recettes recalculées, courses et sauvegarde automatique) sont conservées.
